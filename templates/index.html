@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlickPick - Movie Recommendations</title>
+    <link rel="icon" type="image/x-icon" href="./static/favicon.ico">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="theme-switch-wrapper">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider round">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+            </div>
+        </label>
+    </div>
+    
+    <div class="container">
+        <h1>🎬 FlickPick</h1>
+        <p class="subtitle">Your Personal Movie Recommender</p>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="mood">How are you feeling today?</label>
+                <select id="mood">
+                    <option value="">Select your mood</option>
+                    <option value="happy">Happy</option>
+                    <option value="sad">Sad</option>
+                    <option value="excited">Excited</option>
+                    <option value="relaxed">Relaxed</option>
+                    <option value="romantic">Romantic</option>
+                    <option value="nostalgic">Nostalgic</option>
+                    <option value="thoughtful">Thoughtful</option>
+                    <option value="energetic">Energetic</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label for="genre">What genre are you in the mood for?</label>
+                <select id="genre">
+                    <option value="">Select a genre</option>
+                    <option value="action">Action</option>
+                    <option value="comedy">Comedy</option>
+                    <option value="drama">Drama</option>
+                    <option value="thriller">Thriller</option>
+                    <option value="horror">Horror</option>
+                    <option value="romance">Romance</option>
+                    <option value="sci-fi">Science Fiction</option>
+                    <option value="fantasy">Fantasy</option>
+                    <option value="animation">Animation</option>
+                    <option value="documentary">Documentary</option>
+                </select>
+            </div>
+
+            <button onclick="getRecommendations()">Get Recommendations</button>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <p>Finding the perfect movies for you... 🔍</p>
+        </div>
+
+        <div id="recommendations" class="recommendations hidden">
+            <h2>Your Personalized Recommendations:</h2>
+            <div id="recommendations-content" class="movie-cards"></div>
+        </div>
+
+        <div id="error" class="error hidden"></div>
+    </div>
+
+    <!-- Add modal for trailer -->
+    <div id="trailerModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div id="youtubePlayer"></div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+</body>
+</html> 
