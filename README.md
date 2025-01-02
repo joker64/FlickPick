@@ -24,9 +24,7 @@ Before you begin, ensure you have the following:
 
 ## Installation 🚀
 
-1. Clone the repository:
-    git clone <repository-url>
-    cd flickpick
+1. Clone the repository.
 
 2. Install required packages: pip install -r requirements.txt
 
