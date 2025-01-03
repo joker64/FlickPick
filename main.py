@@ -26,6 +26,26 @@ TMDB_BASE_URL = "https://api.themoviedb.org/3"
 YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 YOUTUBE_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search"
 
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/get_recommendations', methods=['POST'])
+def recommendations():
+    try:
+        data = request.get_json()
+        mood = data.get('mood')
+        genre = data.get('genre')
+        
+        if not mood or not genre:
+            return jsonify({'error': 'Please provide both mood and genre'}), 400
+            
+        recommendations = get_movie_recommendations(mood, genre)
+        return jsonify({'recommendations': recommendations})
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 def get_movie_poster_and_rating(movie_title, year=None):
     """
     Search for a movie poster and rating using TMDB API
@@ -124,25 +144,6 @@ def get_movie_recommendations(mood, genre):
     except json.JSONDecodeError:
         return []
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
-@app.route('/get_recommendations', methods=['POST'])
-def recommendations():
-    try:
-        data = request.get_json()
-        mood = data.get('mood')
-        genre = data.get('genre')
-        
-        if not mood or not genre:
-            return jsonify({'error': 'Please provide both mood and genre'}), 400
-            
-        recommendations = get_movie_recommendations(mood, genre)
-        return jsonify({'recommendations': recommendations})
-        
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
     # Use environment variables for host and port
