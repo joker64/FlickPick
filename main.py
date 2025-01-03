@@ -12,6 +12,11 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 app = Flask(__name__)
 
+# Configure for production
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
+app.config['ENV'] = os.getenv('FLASK_ENV', 'production')
+app.config['DEBUG'] = False
+
 # TMDB and YouTube API configuration
 TMDB_API_KEY = os.getenv('TMDB_API_KEY')
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
@@ -77,9 +82,11 @@ def get_movie_recommendations(mood, genre):
     Get movie recommendations based on mood and genre using OpenAI API
     """
     prompt = f"""
-    Recommend exactly 3 movies that match the following criteria:
+    Recommend exactly 3 UNIQUE and DIFFERENT movies that match the following criteria:
     - Mood: {mood}
     - Genre: {genre}
+    
+    IMPORTANT: Each movie must be completely different from the others. Do not recommend sequels or movies from the same franchise.
     
     For each movie, provide the following in JSON format:
     {{
@@ -89,21 +96,27 @@ def get_movie_recommendations(mood, genre):
         "reason": "Why it matches the mood and genre"
     }}
     
-    Provide the response as a JSON array of exactly 3 movies.
+    Provide the response as a JSON array of exactly 3 UNIQUE movies.
     """
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a knowledgeable movie expert providing precise recommendations. Always respond with valid JSON."},
+            {"role": "system", "content": "You are a knowledgeable movie expert providing precise recommendations. Always respond with valid JSON. Never recommend the same movie twice or movies from the same franchise."},
             {"role": "user", "content": prompt}
         ],
         temperature=0.7
     )
     
-    # Parse the response as JSON
     try:
         movies = json.loads(response.choices[0].message.content)
+        
+        # Check for duplicates
+        titles = [movie['title'].lower() for movie in movies]
+        if len(titles) != len(set(titles)):
+            # If duplicates found, make another API call
+            return get_movie_recommendations(mood, genre)
+            
         # Add poster URLs, ratings, and trailer IDs to each movie
         for movie in movies:
             movie_data = get_movie_poster_and_rating(movie['title'], movie.get('year'))
@@ -135,4 +148,6 @@ def recommendations():
         return jsonify({'error': str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Use environment variables for host and port
+    port = int(os.getenv('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
