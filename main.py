@@ -149,5 +149,5 @@ def recommendations():
 
 if __name__ == "__main__":
     # Use environment variables for host and port
-    port = int(os.getenv('PORT', 5000))
+    port = int(os.getenv('PORT', 8000))
     app.run(host='0.0.0.0', port=port)

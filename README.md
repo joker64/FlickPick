@@ -46,8 +46,8 @@ Before you begin, ensure you have the following:
    - Start the Flask application
 
 The application will be available at:
-- Local access: `http://localhost:5000`
-- Network access: `http://your_local_ip:5000`
+- Local access: `http://localhost:8000`
+- Network access: `http://your_local_ip:8000`
 
 ## Usage 💡
 
