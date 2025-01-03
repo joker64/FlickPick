@@ -8,17 +8,17 @@ import json
 # Load environment variables
 load_dotenv()
 
-# Initialize OpenAI client and Flask app
-client = OpenAI(
-    api_key=os.getenv('OPENAI_API_KEY'),
-    base_url="https://api.openai.com/v1"  # Explicitly set the base URL
-)
+# Initialize Flask app
 app = Flask(__name__)
 
 # Configure for production
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
 app.config['ENV'] = os.getenv('FLASK_ENV', 'production')
 app.config['DEBUG'] = False
+
+# Create OpenAI client only when needed
+def get_openai_client():
+    return OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 
 # TMDB and YouTube API configuration
 TMDB_API_KEY = os.getenv('TMDB_API_KEY')
@@ -84,6 +84,8 @@ def get_movie_recommendations(mood, genre):
     """
     Get movie recommendations based on mood and genre using OpenAI API
     """
+    client = get_openai_client()  # Create client when needed
+    
     prompt = f"""
     Recommend exactly 3 UNIQUE and DIFFERENT movies that match the following criteria:
     - Mood: {mood}
