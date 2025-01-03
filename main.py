@@ -131,7 +131,7 @@ def home():
 @app.route('/get_recommendations', methods=['POST'])
 def recommendations():
     try:
-        data = request.json
+        data = request.get_json()
         mood = data.get('mood')
         genre = data.get('genre')
         
