@@ -9,7 +9,10 @@ import json
 load_dotenv()
 
 # Initialize OpenAI client and Flask app
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+client = OpenAI(
+    api_key=os.getenv('OPENAI_API_KEY'),
+    base_url="https://api.openai.com/v1"  # Explicitly set the base URL
+)
 app = Flask(__name__)
 
 # Configure for production
