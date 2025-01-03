@@ -18,7 +18,9 @@ app.config['DEBUG'] = False
 
 # Create OpenAI client only when needed
 def get_openai_client():
-    return OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+    return OpenAI(
+        api_key=os.getenv('OPENAI_API_KEY')
+    )
 
 # TMDB and YouTube API configuration
 TMDB_API_KEY = os.getenv('TMDB_API_KEY')
@@ -91,8 +93,6 @@ def get_movie_recommendations(mood, genre):
     - Mood: {mood}
     - Genre: {genre}
     
-    IMPORTANT: Each movie must be completely different from the others. Do not recommend sequels or movies from the same franchise.
-    
     For each movie, provide the following in JSON format:
     {{
         "title": "Movie Title",
@@ -101,13 +101,13 @@ def get_movie_recommendations(mood, genre):
         "reason": "Why it matches the mood and genre"
     }}
     
-    Provide the response as a JSON array of exactly 3 UNIQUE movies.
+    Provide the response as a JSON array of exactly 3 movies.
     """
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a knowledgeable movie expert providing precise recommendations. Always respond with valid JSON. Never recommend the same movie twice or movies from the same franchise."},
+            {"role": "system", "content": "You are a knowledgeable movie expert providing precise recommendations. Always respond with valid JSON."},
             {"role": "user", "content": prompt}
         ],
         temperature=0.7
@@ -115,14 +115,7 @@ def get_movie_recommendations(mood, genre):
     
     try:
         movies = json.loads(response.choices[0].message.content)
-        
-        # Check for duplicates
-        titles = [movie['title'].lower() for movie in movies]
-        if len(titles) != len(set(titles)):
-            # If duplicates found, make another API call
-            return get_movie_recommendations(mood, genre)
-            
-        # Add poster URLs, ratings, and trailer IDs to each movie
+        # Add poster URLs to each movie
         for movie in movies:
             movie_data = get_movie_poster_and_rating(movie['title'], movie.get('year'))
             movie['poster'] = movie_data['poster']
