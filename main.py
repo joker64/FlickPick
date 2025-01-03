@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Configure for production
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here')
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'efd7e5f66498ffa0c0a8b73e2bca278adef1ed84de36cd340f6d8e773f55eb61')
 app.config['ENV'] = os.getenv('FLASK_ENV', 'production')
 app.config['DEBUG'] = False
 
