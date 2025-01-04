@@ -31,9 +31,13 @@ async function getRecommendations() {
     }
 
     // Show loading and hide other sections
-    document.getElementById('loading').classList.remove('hidden');
-    document.getElementById('recommendations').classList.add('hidden');
-    document.getElementById('error').classList.add('hidden');
+    const loadingElement = document.getElementById('loading');
+    const recommendationsElement = document.getElementById('recommendations');
+    const errorElement = document.getElementById('error');
+
+    loadingElement.classList.remove('hidden');
+    recommendationsElement.classList.add('hidden');
+    errorElement.classList.add('hidden');
 
     try {
         const response = await fetch('/get_recommendations', {
@@ -54,7 +58,8 @@ async function getRecommendations() {
     } catch (error) {
         showError('An error occurred while fetching recommendations');
     } finally {
-        document.getElementById('loading').classList.add('hidden');
+        // Hide loading when done
+        loadingElement.classList.add('hidden');
     }
 }
 
