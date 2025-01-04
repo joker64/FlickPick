@@ -495,4 +495,19 @@ input:checked + .slider .fa-moon {
 
 .rating i {
     color: #fbbf24;  /* Golden yellow color for the star */
+}
+
+/* Add these styles */
+.credits {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.credits:hover {
+    color: var(--primary-color);
+    transition: color 0.3s ease;
 } 
