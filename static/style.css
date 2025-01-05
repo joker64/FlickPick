@@ -166,11 +166,13 @@ button:active {
     border: 1px solid var(--border-color);
     cursor: pointer;
     outline: none;
+    border: 2px solid transparent;
 }
 
-.movie-card:hover, .movie-card:focus {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: var(--card-hover-shadow);
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
 }
 
 .movie-poster {
@@ -369,7 +371,7 @@ input:checked + .slider .fa-moon {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.9);
     z-index: 1000;
 }
 
@@ -382,21 +384,43 @@ input:checked + .slider .fa-moon {
 .modal-content {
     position: relative;
     width: 90%;
-    max-width: 800px;
+    max-width: 960px;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
-#youtubePlayer {
+#trailerFrame {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    aspect-ratio: 16/9;
+    height: 100%;
+    border: none;
 }
 
 .close-button {
     position: absolute;
-    right: -30px;
-    top: -30px;
+    top: -40px;
+    right: -40px;
+    width: 40px;
+    height: 40px;
     color: white;
     font-size: 28px;
     cursor: pointer;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
 }
 
 @media (max-width: 768px) {
@@ -405,8 +429,8 @@ input:checked + .slider .fa-moon {
     }
     
     .close-button {
-        right: 5px;
-        top: -35px;
+        right: 0;
+        top: -50px;
     }
 }
 
@@ -510,4 +534,194 @@ input:checked + .slider .fa-moon {
 .credits:hover {
     color: var(--primary-color);
     transition: color 0.3s ease;
+}
+
+/* Add these styles for the modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 960px;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.close-button {
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 40px;
+    height: 40px;
+    color: white;
+    font-size: 28px;
+    cursor: pointer;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.close-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.trailer-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+    }
+    
+    .close-button {
+        right: 0;
+        top: -50px;
+    }
+}
+
+/* Update the movie card hover effects */
+.movie-card {
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--primary-color);
+}
+
+.movie-card::before {
+    content: '\f144';  /* YouTube play icon */
+    font-family: 'Font Awesome 5 Free';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.movie-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.movie-card:hover::before,
+.movie-card:hover::after {
+    opacity: 1;
+}
+
+.trailer-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-color);
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+.movie-card:hover .trailer-hint {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.trailer-hint i {
+    font-size: 1.2rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Add a watch trailer text that appears on hover */
+.watch-trailer-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 3;
+    pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    padding: 0 1rem;
+}
+
+.movie-card:hover .watch-trailer-text {
+    opacity: 1;
+}
+
+/* Update the play icon position */
+.movie-card::before {
+    content: '\f144';
+    font-family: 'Font Awesome 5 Free';
+    position: absolute;
+    top: 40%; /* Move up slightly to make room for text */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 2;
+    pointer-events: none;
 } 

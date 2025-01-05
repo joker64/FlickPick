@@ -24,6 +24,7 @@ if (currentTheme) {
 async function getRecommendations() {
     const mood = document.getElementById('mood').value;
     const genre = document.getElementById('genre').value;
+    const language = document.getElementById('language').value;
     
     if (!mood || !genre) {
         showError('Please select both a mood and a genre');
@@ -45,7 +46,7 @@ async function getRecommendations() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ mood, genre })
+            body: JSON.stringify({ mood, genre, language })
         });
 
         const data = await response.json();
@@ -58,24 +59,8 @@ async function getRecommendations() {
     } catch (error) {
         showError('An error occurred while fetching recommendations');
     } finally {
-        // Hide loading when done
         loadingElement.classList.add('hidden');
     }
-}
-
-let player;
-
-function onYouTubeIframeAPIReady() {
-    player = new YT.Player('youtubePlayer', {
-        width: '100%',
-        height: '100%',
-        videoId: '',
-        playerVars: {
-            'autoplay': 1,
-            'playsinline': 1,
-            'rel': 0
-        }
-    });
 }
 
 function showTrailer(trailerId) {
@@ -85,22 +70,27 @@ function showTrailer(trailerId) {
     }
 
     const modal = document.getElementById('trailerModal');
+    const iframe = document.getElementById('trailerFrame');
+    
+    // Set the iframe source with the embedded YouTube URL
+    iframe.src = `https://www.youtube.com/embed/${trailerId}?autoplay=1&rel=0`;
+    
+    // Show the modal
     modal.classList.add('show');
-
-    if (player && player.loadVideoById) {
-        player.loadVideoById(trailerId);
-    }
 }
 
 function closeTrailer() {
     const modal = document.getElementById('trailerModal');
+    const iframe = document.getElementById('trailerFrame');
+    
+    // Stop the video by clearing the iframe source
+    iframe.src = '';
+    
+    // Hide the modal
     modal.classList.remove('show');
-    if (player && player.stopVideo) {
-        player.stopVideo();
-    }
 }
 
-// Event Listeners
+// Add event listeners for closing the trailer
 document.querySelector('.close-button').addEventListener('click', closeTrailer);
 
 document.getElementById('trailerModal').addEventListener('click', (e) => {
@@ -109,14 +99,21 @@ document.getElementById('trailerModal').addEventListener('click', (e) => {
     }
 });
 
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        closeTrailer();
+    }
+});
+
 function showRecommendations(movies) {
     const content = document.getElementById('recommendations-content');
     content.innerHTML = movies.map(movie => `
-        <div class="movie-card" onclick="showTrailer('${movie.trailerId || ''}')" role="button" tabindex="0">
+        <div class="movie-card" onclick="handleMovieClick('${movie.title}', '${movie.year}')" role="button" tabindex="0">
             ${movie.poster 
                 ? `<img src="${movie.poster}" alt="${movie.title}" class="movie-poster">`
                 : `<div class="no-poster"><i class="fas fa-film fa-3x"></i></div>`
             }
+            <div class="watch-trailer-text">Watch Trailer</div>
             <div class="movie-info">
                 <div class="movie-title">${movie.title}</div>
                 <div class="movie-year-rating">
@@ -131,12 +128,9 @@ function showRecommendations(movies) {
                 </div>
                 <div class="movie-description">${movie.description}</div>
                 <div class="movie-reason">${movie.reason}</div>
-                ${movie.trailerId 
-                    ? `<div class="trailer-hint">
-                         <i class="fas fa-play-circle"></i> Click to watch trailer
-                       </div>`
-                    : ''
-                }
+                <div class="trailer-hint">
+                    <i class="fas fa-play-circle"></i> Click to watch trailer
+                </div>
             </div>
         </div>
     `).join('');
@@ -149,9 +143,26 @@ function showError(message) {
     error.classList.remove('hidden');
 }
 
-// Add keyboard support for closing modal
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        closeTrailer();
+// Add function to handle movie card clicks
+async function handleMovieClick(title, year) {
+    try {
+        const response = await fetch('/get_trailer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title, year })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.trailerId) {
+            showTrailer(data.trailerId);
+        } else {
+            showError('Trailer not available for this movie');
+        }
+    } catch (error) {
+        showError('Error loading trailer');
+        console.error('Error:', error);
     }
-}); 
+} 

@@ -25,8 +25,8 @@ Before you begin, ensure you have the following:
 ## Installation 🚀
 
 1. Clone the repository:
-    git clone <repository-url>
-    cd flickpick
+    git clone https://github.com/joker64/FlickPick.git
+    cd FlickPick
 
 2. Install required packages: pip install -r requirements.txt
 

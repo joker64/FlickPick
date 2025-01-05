@@ -56,6 +56,15 @@
                 </select>
             </div>
 
+            <div class="input-group">
+                <label for="language">Movie Language</label>
+                <select id="language">
+                    <option value="all">All Languages</option>
+                    <option value="en">English</option>
+                    <option value="ar">Arabic</option>
+                </select>
+            </div>
+
             <button onclick="getRecommendations()">Get Recommendations</button>
         </div>
 
@@ -75,15 +84,25 @@
         </footer>
     </div>
 
-    <!-- Add modal for trailer -->
     <div id="trailerModal" class="modal">
         <div class="modal-content">
             <span class="close-button">&times;</span>
-            <div id="youtubePlayer"></div>
+            <iframe id="trailerFrame" 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+            </iframe>
         </div>
     </div>
 
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    </script>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html> 
